@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Toast from "../components/Toast";
 
 export default function EditJob() {
 	const { id } = useParams();
@@ -11,6 +12,7 @@ export default function EditJob() {
 		status: "",
 		notes: "",
 	});
+	const [toast, setToast] = useState(null);
 
 	useEffect(() => {
 		const storedJobs = JSON.parse(localStorage.getItem("job-applications"));
@@ -32,6 +34,11 @@ export default function EditJob() {
 		);
 		localStorage.setItem("job-applications", JSON.stringify(updatedJobs));
 		navigate(`/job/${id}`);
+		showToast("Job updated successfully!");
+	}
+
+	function showToast(message, type = "info") {
+		setToast({ message, type });
 	}
 
 	return (
@@ -39,6 +46,14 @@ export default function EditJob() {
 			<h2 className="mb-6 text-xl font-semibold text-gray-700">
 				Edit job application
 			</h2>
+
+			{toast && (
+				<Toast
+					message={toast.message}
+					type={toast.type}
+					onClose={() => setToast(null)}
+				/>
+			)}
 
 			<form
 				onSubmit={handleSubmit}

@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { dummyJobs, getDate } from "../utils/helper";
+import Toast from "../components/Toast";
+
 export default function Dashboard() {
 	const [jobs, setJobs] = useState(dummyJobs);
+	const [toast, setToast] = useState(null);
 
 	useEffect(() => {
 		const storedJobs = JSON.parse(localStorage.getItem("job-applications"));
@@ -17,6 +20,11 @@ export default function Dashboard() {
 		const updated = jobs.filter((job) => job.id !== jobId);
 		setJobs(updated);
 		localStorage.setItem("job-applications", JSON.stringify(updated));
+		showToast("Job deleted", "error");
+	}
+
+	function showToast(message, type = "info") {
+		setToast({ message, type });
 	}
 
 	return (
@@ -33,6 +41,15 @@ export default function Dashboard() {
 					+ Add Job
 				</Link>
 			</div>
+
+			{/* Toast */}
+			{toast && (
+				<Toast
+					message={toast.message}
+					type={toast.type}
+					onClose={() => setToast(null)}
+				/>
+			)}
 
 			{/* Mobile view */}
 			<div className="grid gap-4 mt-6 sm:hidden">
@@ -82,12 +99,12 @@ export default function Dashboard() {
 								<div className="flex items-center justify-end gap-4 mt-8">
 									<Link
 										to={`/edit/${job.id}`}
-										className="px-4 py-2 text-sm text-white transition-colors bg-yellow-500 rounded-lg  hover:bg-yellow-600"
+										className="px-4 py-2 text-sm text-white transition-colors bg-yellow-500 rounded-lg hover:bg-yellow-600"
 									>
 										Edit
 									</Link>
 									<Link
-										onClick={() => handleDelete}
+										onClick={() => handleDelete(job.id)}
 										className="px-4 py-2 text-sm text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700"
 									>
 										Delete

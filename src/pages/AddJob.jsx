@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Toast from "../components/Toast";
 
 export default function AddJob() {
 	const navigate = useNavigate();
 
+	const [toast, setToast] = useState(null);
 	const [form, setForm] = useState({
 		company: "",
 		position: "",
@@ -15,6 +17,10 @@ export default function AddJob() {
 	function handleChange(e) {
 		const { name, value } = e.target;
 		setForm({ ...form, [name]: value });
+	}
+
+	function showToast(message, type = "info") {
+		setToast({ message, type });
 	}
 
 	function handleSubmit(e) {
@@ -30,7 +36,7 @@ export default function AddJob() {
 		);
 
 		navigate("/");
-		console.log(`🚀 ~ handleSubmit ~ navigate("/"):`, navigate("/"));
+		showToast("New job added!", "success");
 	}
 
 	return (
@@ -38,6 +44,14 @@ export default function AddJob() {
 			<h2 className="mb-6 text-xl font-semibold text-gray-700">
 				Add new job application
 			</h2>
+
+			{toast && (
+				<Toast
+					message={toast.message}
+					type={toast.type}
+					onClose={() => setToast(null)}
+				/>
+			)}
 
 			<form
 				onSubmit={handleSubmit}
